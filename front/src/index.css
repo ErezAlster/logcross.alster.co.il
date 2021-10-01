@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+}
+
+.ant-layout-header {
+  color: #FFFFFF !important;
+}
+
+.ant-form-rtl .ant-form-item-label {
+  text-align: right !important;
+}

@@ -1,0 +1,62 @@
+apiVersion: ahora.dev/v1alpha1
+kind: SPA
+metadata:
+  name: logcross
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  SPAArchiveURL: https://storage.googleapis.com/alster-crosswords/crosswords-0.0.4.tar.tz
+  replicas: 1
+  hosts: 
+  - logcrossspa.alster.co.il
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 3
+    periodSeconds: 3
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 3
+    periodSeconds: 3
+  resources:
+    requests:
+      memory: "32Mi"
+      cpu: "50m"
+    limits:
+      memory: "64Mi"
+      cpu: "100m"
+  paths:
+  - path: /api
+    backend:
+      serviceName: crosswords-api
+      servicePort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: logcross-manual-ingress
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: logcross.alster.co.il
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: logcross
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: crosswords-api
+            port:
+              number: 80

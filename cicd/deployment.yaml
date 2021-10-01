@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crosswords-api
+spec:
+  selector:
+    matchLabels:
+      app: crosswords-api
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: crosswords-api
+    spec:
+      containers:
+      - name: api
+        image: erezalster/crosswords-api:0.0.2
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crosswords-api
+spec:
+  selector:
+    app: crosswords-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
