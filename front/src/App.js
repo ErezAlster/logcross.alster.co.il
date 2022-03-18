@@ -14,6 +14,30 @@ const CORRECT_RESULT = "Correct";
 const PARTIAL_RESULT  = "Partial";
 const IN_CORRECT_RESULT  = "InCorrect";
 
+function normalizeWord(word) {
+  let newWord = "";
+  for (let index = 0; index < word.length; index++) {
+    newWord += Sofiot(word[index]);
+  }
+  return newWord;
+}
+
+function Sofiot(character) {
+  switch (character) {
+    case "ם":
+      return "מ";
+    case "ן":
+      return "נ";
+    case "ף":
+      return "פ"
+    case "ך":
+        return "כ"
+    case "ץ":
+      return "צ"
+    default:
+      return character;
+  }
+}
 
 function App() {
   const [crosswords, setCrosswords] = useState([]);
@@ -43,6 +67,10 @@ function App() {
 
       const result = await axios(`/api/crosswords/${currentCrossword}`);
       setDates(result.data);
+      if(result.data.length > 0) {
+        setCurrentDate(result.data[0])
+
+      }
     }
     fetchDates();
   }, [currentCrossword]);
@@ -67,20 +95,24 @@ function App() {
 
   const checkExpression = () => {
     const realAnswer = expressions[currentExpression];
-      if(answer === realAnswer.answer) {
+    const noramlizedAnswer = normalizeWord(answer);
+    const noramlizedRealAnswer = normalizeWord(realAnswer.answer);
+
+    console.log(noramlizedAnswer, noramlizedRealAnswer);
+      if(noramlizedAnswer === noramlizedRealAnswer) {
         setShowResult(CORRECT_RESULT);
         return;
       }
       else {
-        if(answer.length === realAnswer.answer.length) {
+        if(noramlizedAnswer.length === noramlizedAnswer.length) {
           let possibleValue = "";
 
           for (let index = 0; index < answer.length; index++) {
-            possibleValue += answer[index] === '*' ? '*' : realAnswer.answer[index]
+            possibleValue += answer[index] === '*' ? '*' : noramlizedRealAnswer[index]
           }
 
 
-          if(possibleValue === answer) {
+          if(possibleValue === noramlizedAnswer) {
             setShowResult(PARTIAL_RESULT);
             return;
           }

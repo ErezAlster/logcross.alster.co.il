@@ -1,11 +1,11 @@
-apiVersion: ahora.dev/v1alpha1
+apiVersion: ahora.io.ahora.io/v1
 kind: SPA
 metadata:
   name: logcross
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
-  SPAArchiveURL: https://storage.googleapis.com/alster-crosswords/crosswords-0.0.4.tar.tz
+  SPAArchiveURL: https://storage.googleapis.com/alster-crosswords/crosswords-0.0.5.tar.tz
   replicas: 1
   hosts: 
   - logcrossspa.alster.co.il
@@ -33,30 +33,3 @@ spec:
     backend:
       serviceName: crosswords-api
       servicePort: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: logcross-manual-ingress
-  annotations:
-    # use the shared ingress-nginx
-    kubernetes.io/ingress.class: "nginx"
-spec:
-  rules:
-  - host: logcross.alster.co.il
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: logcross
-            port:
-              number: 80
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: crosswords-api
-            port:
-              number: 80
