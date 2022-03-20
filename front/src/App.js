@@ -41,9 +41,9 @@ function Sofiot(character) {
 
 function App() {
   const [crosswords, setCrosswords] = useState([]);
-  const [currentCrossword, setCurrentCrossword] = useState(undefined);
-  const [currentExpression, setCurrentExpression] = useState(undefined);
-  const [currentDate, setCurrentDate] = useState(undefined);
+  const [currentCrossword, setCurrentCrossword] = useState(localStorage.getItem("currentCrossword") || undefined);
+  const [currentExpression, setCurrentExpression] = useState(localStorage.getItem("currentExpression") || undefined);
+  const [currentDate, setCurrentDate] = useState(localStorage.getItem("currentDate")|| undefined);
   const [dates, setDates] = useState([]);
   const [expressions, setExpressions] = useState({});
   const [answer, setAnswer] = useState(undefined);
@@ -63,13 +63,13 @@ function App() {
     setShowResult(HIDE_RESULT);
     setExpressions({});
 
+
     async function fetchDates() {
 
       const result = await axios(`/api/crosswords/${currentCrossword}`);
       setDates(result.data);
       if(result.data.length > 0) {
-        setCurrentDate(result.data[0])
-
+        setCurrentDate(localStorage.getItem("currentDate") || result.data[0])
       }
     }
     fetchDates();
@@ -77,9 +77,23 @@ function App() {
 
   useEffect(() => {
     if(currentDate) {
+      if(currentDate !== localStorage.getItem("currentDate")) {
+        setCurrentExpression(undefined);
+      }
+      localStorage.setItem("currentDate", currentDate);
+      }
+
+    if(currentCrossword) {
+      if(currentCrossword !== localStorage.getItem("currentCrossword")) {
+        setCurrentDate(undefined);
+        setCurrentExpression(undefined);
+      }
+      localStorage.setItem("currentCrossword", currentCrossword);
+    }
+
+    if(currentDate) {
       setExpressions({});
       setShowResult(HIDE_RESULT);
-      setCurrentExpression(undefined);
       const fetchExpressions = async () => {
         const result = await axios(`/api/crosswords/${currentCrossword}/results?date=${currentDate}`);
         setExpressions(result.data);
@@ -89,6 +103,7 @@ function App() {
   }, [currentDate, currentCrossword]);
 
   useEffect(() => {
+    localStorage.setItem("currentExpression", currentExpression);
     setShowResult(HIDE_RESULT);
   }, [currentExpression, answer]);
 
@@ -145,11 +160,11 @@ function App() {
                 </Select>
               </Form.Item>
               <Form.Item label="ביטוי">
-              <Select value={currentExpression} onChange={(val)=> setCurrentExpression(val)}>
+              <Select value={currentExpression} onChange={setCurrentExpression}>
                 { expressions && Object.entries(expressions).map(([key]) => <Select.Option key={key} value={key}>{key}</Select.Option>)}                  
                 </Select>
               </Form.Item>
-              <Form.Item label="תשובה">
+              <Form.Item label={<>תשובה {expressions[currentExpression]?.answer && <>({expressions[currentExpression]?.answer?.length })</>}</>}>
               { (currentExpression && answer!== undefined) ?
               <>
                 {answer.length > 0 ? 
