@@ -58,7 +58,7 @@ app.get('/api/crosswords/:crosswordId/results', async (req, res) => {
             }
             return {
                 question: question.textContent,
-                answer: anwer.childNodes[0].text.trim(),
+                answer: anwer.childNodes[0].getAttribute("data-content"),
                 explanation: explanations
             }
         });
