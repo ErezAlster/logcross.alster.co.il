@@ -3,9 +3,10 @@ import { Layout } from 'antd';
 import 'antd/dist/antd.css';
 import {Form,Input,Alert,Select} from 'antd';
 import { ConfigProvider } from 'antd';
+import { ClearOutlined } from '@ant-design/icons';
 
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const { Header, Content } = Layout;
 
@@ -48,6 +49,7 @@ function App() {
   const [expressions, setExpressions] = useState({});
   const [answer, setAnswer] = useState(undefined);
   const [showResult, setShowResult] = useState(HIDE_RESULT);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const fetchCrosswords = async () => {
@@ -107,13 +109,22 @@ function App() {
     setShowResult(HIDE_RESULT);
   }, [currentExpression, answer]);
 
+  useEffect(() => {
+    if(showResult !== HIDE_RESULT)
+    {
+      setTimeout(() => {
+        const focusElement = document.getElementById("focus");
+        focusElement && document.getElementById("focus").scrollIntoView();
+      }, 0);
+    }
+  }, [showResult]);
+
 
   const checkExpression = () => {
     const realAnswer = expressions[currentExpression];
     const noramlizedAnswer = normalizeWord(answer);
     const noramlizedRealAnswer = normalizeWord(realAnswer.answer);
 
-    console.log(noramlizedAnswer, noramlizedRealAnswer);
       if(noramlizedAnswer === noramlizedRealAnswer) {
         setShowResult(CORRECT_RESULT);
         return;
@@ -142,6 +153,15 @@ function App() {
     setShowResult(CORRECT_RESULT);
   }
 
+  const onClear = () => {
+    if(inputRef.current) {
+      console.log(inputRef.current);
+      inputRef.current.focus({
+        cursor: 'all',
+      });
+    }
+  }
+
   return (
     <ConfigProvider direction="rtl">
       <div >
@@ -164,51 +184,54 @@ function App() {
                 { expressions && Object.entries(expressions).map(([key]) => <Select.Option key={key} value={key}>{key}</Select.Option>)}                  
                 </Select>
               </Form.Item>
-              <Form.Item label={<>תשובה {expressions[currentExpression]?.answer && <>({expressions[currentExpression]?.answer?.length })</>}</>}>
+              <Form.Item label={<>תשובה {expressions[currentExpression]?.answer && <>({expressions[currentExpression]?.answer?.length })</>} <ClearOutlined onClick={onClear}/></>}>
               { (currentExpression && answer!== undefined) ?
               <>
                 {answer.length > 0 ? 
-                  <Input.Search onSearch={checkExpression} enterButton="בדוק"  onChange={(val) => setAnswer(val.target.value)}  /> :
-                  <Input.Search onSearch={showMe}  enterButton="גלה לי"  onChange={(val) => setAnswer(val.target.value)}  />
+                  <Input.Search ref={inputRef} onSearch={checkExpression} enterButton="בדוק" onChange={(val) => setAnswer(val.target.value)}  /> :
+                  <Input.Search onSearch={showMe}  enterButton="גלה לי" onChange={(val) => setAnswer(val.target.value)}  />
                 }
               </>
               
             :
-            <Input.Search onSearch={showMe}  enterButton="גלה לי"  onChange={(val) => setAnswer(val.target.value)}  />
+            <Input.Search onSearch={showMe} enterButton="גלה לי"  onChange={(val) => setAnswer(val.target.value)}  />
           }
               </Form.Item>
             </Form>
-            {showResult === IN_CORRECT_RESULT && <Alert message="התשובה אינה נכונה" type="error" />}
-            {showResult === PARTIAL_RESULT && <Alert message="אתם בכיוון" type="success" />}
-            {showResult === CORRECT_RESULT && <div>
-              { expressions[currentExpression] ?
-                <div>
-                  <Alert
-                  message={expressions[currentExpression] && answer === expressions[currentExpression].answer &&<span> התשובה נכונה</span>}
-                  description={
-                    <>
-                    <div>תשובה: {expressions[currentExpression].answer }</div>
-                    {(expressions[currentExpression].explanation && expressions[currentExpression].explanation.length > 0) ?
+            { showResult !== HIDE_RESULT  &&
+            <div>
+              {showResult === IN_CORRECT_RESULT && <Alert message="התשובה אינה נכונה" type="error" />}
+              {showResult === PARTIAL_RESULT && <Alert message="אתם בכיוון" type="success" />}
+              {showResult === CORRECT_RESULT && <div>
+                { expressions[currentExpression] ?
+                  <div>
+                    <Alert
+                    message={expressions[currentExpression] && answer === expressions[currentExpression].answer &&<span> התשובה נכונה</span>}
+                    description={
                       <>
-                      <div>הסבר</div>
-                      <ul>
-                        {expressions[currentExpression].explanation.map((item) =><li key={item}>{item}</li>)}
-                      </ul>
-                    </>
-                    :
-                    <div>אין הסבר</div>}
-                    </>
-                  }
-                  type="success" >
-                  </Alert>
-              </div>
-              :
-              <Alert message="אין תשובה זמינה" type="warning" />}
+                      <div>תשובה: {expressions[currentExpression].answer }</div>
+                      {(expressions[currentExpression].explanation && expressions[currentExpression].explanation.length > 0) ?
+                        <>
+                        <div>הסבר</div>
+                        <ul>
+                          {expressions[currentExpression].explanation.map((item) =><li key={item}>{item}</li>)}
+                        </ul>
+                      </>
+                      :
+                      <div>אין הסבר</div>}
+                      </>
+                    }
+                    type="success" >
+                    </Alert>
+                </div>
+                :
+                <Alert message="אין תשובה זמינה" type="warning" />}
 
-              <button onClick={()=> setShowResult(HIDE_RESULT)}>סגור</button>
-              </div>
-            }
-
+                <button onClick={()=> setShowResult(HIDE_RESULT)}>סגור</button>
+                </div>
+              }
+              <div id='focus'></div>
+            </div>}
           </Content>
 
 

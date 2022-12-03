@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+    auth-extra-groups: c3lzdGVtOmJvb3RzdHJhcHBlcnM6a3ViZWFkbTpkZWZhdWx0LW5vZGUtdG9rZW4=
+    description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIGdlbmVyYXRlZCBieSAna3ViZWFkbSBpbml0Jy4=
+    expiration: MjAyMi0xMi0wNFQxNzoxNjo1NFo=
+    token-id: amhvNTl4
+    token-secret: eDluNTExdTlsZnZ0cXVnMQ==
+    usage-bootstrap-authentication: dHJ1ZQ==
+    usage-bootstrap-signing: dHJ1ZQ==
+kind: Secret
+metadata:
+  name: bootstrap-token-jho59x
+  namespace: kube-system
+type: bootstrap.kubernetes.io/token

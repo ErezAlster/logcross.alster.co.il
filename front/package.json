@@ -13,7 +13,7 @@
     "react-scripts": "4.0.3",
     "web-vitals": "^1.1.2"
   },
-  "proxy": "http://localhost:80",
+  "proxy": "http://logcross.alster.co.il/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

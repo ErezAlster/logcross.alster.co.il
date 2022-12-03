@@ -2,14 +2,15 @@ apiVersion: ahora.io/v1
 kind: SPA
 metadata:
   name: logcross
+  namespace: logcross
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     kubernetes.io/ingress.class: nginx
 spec:
-  SPAArchiveURL: https://storage.googleapis.com/alster-crosswords/crosswords-1.0.0.tar.tz
+  SPAArchiveURL: https://storage.googleapis.com/alster-crosswords/crosswords-1.0.6.tar.tz
   replicas: 1
   hosts: 
-  - logcrosss.alster.co.il
+  - logcross.alster.co.il
   livenessProbe:
     httpGet:
       path: /
