@@ -6,7 +6,7 @@ kubectl apply -f vip.yaml
 kubectl apply -f vip-ds.yaml
 
 kubectl create namespace ingress
-helm delete default-ingress -n ingress
-helm install default-ingress nginx-stable/nginx-ingress -n ingress
+helm delete default-ingress -n ingress --kubeconfig ~/home.yaml 
+helm install default-ingress nginx-stable/nginx-ingress -n ingress --set service.enabled=false,controller.hostNetwork=true
 
 sudo ip addr add 192.168.68.221/24 dev enp34s0

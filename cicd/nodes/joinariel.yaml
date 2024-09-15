@@ -2,9 +2,10 @@ apiVersion: kubeadm.k8s.io/v1beta3
 kind: JoinConfiguration
 discovery:
   bootstrapToken:
-    apiServerEndpoint: home-alster.control.euw3.ecp-rnd.cqloud.com:6443
+    apiServerEndpoint: home.alster.control.dev-euw3.ecp-rnd.cqloud.com:6443
     token: jho59x.x9n511u9lfvtqug1
     unsafeSkipCAVerification: true
 nodeRegistration:
+  criSocket: "/var/run/cri-dockerd.sock"
   kubeletExtraArgs:
     port: "10251"

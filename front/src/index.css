@@ -9,3 +9,8 @@ body {
 .ant-form-rtl .ant-form-item-label {
   text-align: right !important;
 }
+
+.green-macabbi {
+  color: #008000;
+  font-size: 20px;
+}
